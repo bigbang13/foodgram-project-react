@@ -19,7 +19,6 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = [
-# Set here new apps like Users, Tags, Reciepts
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -30,8 +29,6 @@ INSTALLED_APPS = [
     'django_filters',
     'users',
     'recipes',
-    'ingredients',
-    'tags',
     'api',
     # may be uncomment later 'sorl.thumbnail',
 ]
@@ -73,7 +70,10 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 DATABASES = {
     "default": {
-        "ENGINE": os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
+        "ENGINE": os.getenv(
+            'DB_ENGINE',
+            default='django.db.backends.postgresql'
+        ),
         "NAME": os.getenv('DB_NAME', default='postgres'),
         'USER': os.getenv('POSTGRES_USER'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),

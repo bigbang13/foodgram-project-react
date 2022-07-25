@@ -1,6 +1,12 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+ROLE_CHOICES = (
+    ("user", "user"),
+    ("admin", "admin"),
+    ("moderator", "moderator"),
+)
+
 # Add later validation for username
 class User(AbstractUser):
     email = models.EmailField(
@@ -23,3 +29,4 @@ class User(AbstractUser):
         "Пароль",
         max_length=150,
     )
+    role = models.CharField(max_length=100, choices=ROLE_CHOICES)
