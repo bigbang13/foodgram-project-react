@@ -9,12 +9,7 @@ SECRET_KEY = '#b15&t^l36u-_btw5uq$tgkb+p_-+pdvcyd!ygcu=nh&hhyz%2'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    '[::1]',
-    'testserver',    
-]
+ALLOWED_HOSTS = ["*", "testserver"]
 
 # Application definition
 
@@ -27,6 +22,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'django_filters',
+    'djoser',
     'users',
     'recipes',
     'api',
@@ -68,17 +64,25 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
+# DATABASES = {
+#    "default": {
+#        "ENGINE": os.getenv(
+#            'DB_ENGINE',
+#            default='django.db.backends.postgresql'
+#        ),
+#        "NAME": os.getenv('DB_NAME', default='postgres'),
+#        'USER': os.getenv('POSTGRES_USER', default=),
+#        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+#        'HOST': os.getenv('DB_HOST'),
+#        'PORT': os.getenv('DB_PORT')
+#    }
+# }
+
+
 DATABASES = {
     "default": {
-        "ENGINE": os.getenv(
-            'DB_ENGINE',
-            default='django.db.backends.postgresql'
-        ),
-        "NAME": os.getenv('DB_NAME', default='postgres'),
-        'USER': os.getenv('POSTGRES_USER'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT')
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
     }
 }
 
@@ -142,10 +146,10 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
-# AUTH_USER_MODEL = "users.User"
+AUTH_USER_MODEL = "users.User"
 
-# EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
-# EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
+EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
 
 
 # Static files (CSS, JavaScript, Images)

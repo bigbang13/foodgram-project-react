@@ -1,9 +1,47 @@
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from djoser.serializers import UserSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
+from recipes.models import Ingredient, Recipe, Tag
 from users.models import User, ROLE_CHOICES
+
+
+class IngredientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ingredient
+        fields = (
+            "id",
+            "name",
+            "measurement_unit",
+        )
+
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = (
+            "id",
+            "name",
+            "color",
+            "slug",
+        )
+
+
+class RecipeSerializer(serializers.ModelSerializer):
+    ingredients = IngredientSerializer(required=True, many=True)
+    tags = TagSerializer(required=True, many=True)
+
+    class Meta:
+        model = Recipe
+        fields = (
+            "id",
+            "ingredients",
+            "tags",
+            "image",
+            "name",
+            "text",
+            "cooking_time",
+        )
 
 
 class SignUpSerializer(serializers.ModelSerializer):

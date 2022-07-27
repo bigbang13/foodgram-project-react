@@ -19,35 +19,67 @@ from users.models import User
 
 from .mixins import CreateListDestroyViewSet
 from .permissions import IsAdminOrReadOnly, IsAuthorOrStaff, UserPermission
-from .serializers import (CustomTokenObtainSerializer,
-                          SignUpSerializer,
+from .serializers import (CustomTokenObtainSerializer, IngredientSerializer,
+                          RecipeSerializer, SignUpSerializer, TagSerializer,
                           UserMeSerializer, UserSerializer)
 
 
-class RegisterView(APIView):
+class RecipeViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAdminOrReadOnly]
+    queryset = Recipe.objects.all()
+    serializer_class = RecipeSerializer
+    pagination_class = LimitOffsetPagination
+    filter_backends = (DjangoFilterBackend,)
+    # filterset_class = TitleFilter
+
+    # def get_serializer_class(self):
+    #    if self.action in ["list", "retrieve"]:
+    #        return TitleSerializer
+    #    return TitlePostSerializer
+
+
+class TagViewSet(CreateListDestroyViewSet):
+    permission_classes = [IsAdminOrReadOnly]
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    lookup_field = "slug"
+    pagination_class = LimitOffsetPagination
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ("name",)
+
+
+class IngredientViewSet(CreateListDestroyViewSet):
+    permission_classes = [IsAdminOrReadOnly]
+    queryset = Ingredient.objects.all()
+    serializer_class = IngredientSerializer
+    lookup_field = "slug"
+    pagination_class = LimitOffsetPagination
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ("name",)
+
+
+class SignUpAPIView(APIView):
     """
-    Анонимный пользователь высылает JSON c данными для регистрации.
+    Анонимный пользователь высылает JSON c "email" и "username".
+    В ответ на почту получает confirmation_code.
     """
 
     permission_classes = (AllowAny,)
 
     def post(self, request):
         serializer = SignUpSerializer(data=request.data)
-        # if User.objects.filter(
-            # email=request.data.get("email"),
-            # username=request.data.get("username"),
-            # first_name=request.data.get("first_name"),
-            # last_name=request.data.get("last_name"),
-            # password=request.data.get("password"),
-        # ).exists():
-        #    user = User.objects.get(username=request.data.get("username"))
+        if User.objects.filter(
+            email=request.data.get("email"),
+            username=request.data.get("username"),
+        ).exists():
+            user = User.objects.get(username=request.data.get("username"))
         if serializer.is_valid():
             user = User.objects.create(
                 **serializer.validated_data, role="user"
             )
         else:
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
-        # self.send_token(user, request.data.get("email"))
+        self.send_token(user, request.data.get("email"))
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def send_token(self, user, email):
