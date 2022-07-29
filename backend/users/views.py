@@ -1,11 +1,8 @@
-from django.conf import settings
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.core.mail import send_mail
-from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import (CharFilter, DjangoFilterBackend,
                                            FilterSet, NumberFilter)
-from rest_framework import filters, status, viewsets
+from rest_framework import filters, status, viewsets, generics
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import (AllowAny, IsAuthenticated,
@@ -16,10 +13,31 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.generics import GenericAPIView, RetrieveAPIView
 
 from recipes.models import Ingredient, Recipe, Tag
-from users.models import User
+from .models import User
 
 from api.permissions import IsAdminOrReadOnly, UserPermission
 from .serializers import (RegistrationSerializer, UserSerializer, UserIDSerializer, LoginSerializer, PasswordChangeSerializer)
+
+
+
+class UserAPIList(generics.ListCreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly)
+    pagination_class = LimitOffsetPagination
+
+class UserAPIUpdate(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly)
+
+
+class UserAPIDestroy(generics.RetrieveDestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = (IsAuthenticated)
+
+
 
 
 class RegisterView(APIView):
@@ -44,7 +62,7 @@ class RegisterView(APIView):
             )
         else:
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class UserMeView(RetrieveAPIView):
@@ -59,6 +77,7 @@ class UserMeView(RetrieveAPIView):
 class UserIDView(RetrieveAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = UserIDSerializer
+    pagination_class = LimitOffsetPagination
 
     queryset = User.objects.all()
 
@@ -111,6 +130,6 @@ class PasswordChangeView(APIView):
                 return Response("Неверный пароль", status.HTTP_400_BAD_REQUEST)
             request.user.password = new_password
             request.user.save()
-            return Response("Password change successfully", status.HTTP_200_OK)
+            return Response(None, status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
         

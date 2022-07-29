@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'django_filters',
     'djoser',
     'users',
@@ -132,19 +133,20 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
+        # "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
-    "DEFAULT_PAGINATION_CLASS": [
-        "rest_framework.pagination.PageNumberPagination"
-    ],
-    "PAGE_SIZE": 10,
+    # "DEFAULT_PAGINATION_CLASS": [
+    #    "rest_framework.pagination.PageNumberPagination"
+    # ],
+    # "PAGE_SIZE": 10,
 }
 
 
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=10),
-    "AUTH_HEADER_TYPES": ("Bearer",),
-}
+# SIMPLE_JWT = {
+#     "ACCESS_TOKEN_LIFETIME": timedelta(days=10),
+#     "AUTH_HEADER_TYPES": ("Bearer",),
+# }
 
 AUTH_USER_MODEL = "users.User"
 
@@ -152,22 +154,15 @@ EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.2/howto/static-files/
-
-# STATIC_URL = '/static/'
-
-# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-# STATIC_URL = '/static/'
-
-# LOGIN_URL = 'users:login'
-# LOGIN_REDIRECT_URL = 'posts:index'
-# LOGOUT_REDIRECT_URL = 'posts:index'
-
-# EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-# EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
-
-# CSRF_FAILURE_VIEW = 'core.views.csrf_failure'
-
-# MEDIA_URL = '/media/'
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+DJOSER = {
+    'HIDE_USERS': False,
+    'SERIALIZERS': {
+        'user': 'users.serializers.UserIDSerializer',
+        'user_create': 'users.serializers.RegistrationSerializer',
+        'token_create': 'users.serializers.LoginSerializer',
+    },
+    'PERMISSIONS': {
+        'user': ['rest_framework.permissions.IsAuthenticated'],
+        'user_list': ['rest_framework.permissions.AllowAny'],
+    },
+}

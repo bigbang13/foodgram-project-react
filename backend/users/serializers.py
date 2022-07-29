@@ -1,4 +1,4 @@
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.contrib.auth import authenticate
 from djoser.serializers import UserSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
@@ -8,11 +8,11 @@ from users.models import User, ROLE_CHOICES
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField()
-    username = serializers.CharField()
-    first_name = serializers.CharField()
-    last_name = serializers.CharField()
-    password = serializers.CharField()
+    email = serializers.EmailField(required=True, max_length=254)
+    username = serializers.CharField(required=True, max_length=150)
+    first_name = serializers.CharField(required=True, max_length=150)
+    last_name = serializers.CharField(required=True, max_length=150)
+    password = serializers.CharField(write_only=True, required=True, max_length=150)
 
 
     def validate_email(self, value):
@@ -28,8 +28,10 @@ class RegistrationSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 "Использовать имя 'me' в качестве username запрещено."
             )
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError("Username должен быть уникальным")
         return value
-
+    
 
     class Meta:
         model = User
@@ -46,25 +48,30 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField()
     email = serializers.EmailField()
 
+
     def validate(self, value):
         """Проверка соответствия пары email-pwd"""
         password = value.get("password")
         email = value.get("email")
         
-        if email and password:
-            user = User.objects.filter(email=email).first()
-            if user:
-                if user.password == password:
-                    return user
-                else:
-                    raise serializers.ValidationError("Неправильный пароль")
-            else:
-                raise serializers.ValidationError("Пользователь с указанным email не найден")
+        self.user = authenticate(
+            request=self.context.get("request"), email=email, password=password
+        )
+        return value
+        # if email and password:
+        #    user = User.objects.filter(email=email).first()
+        #    if user:
+        #        if user.password == password:
+        #            return user
+        #        else:
+        #            raise serializers.ValidationError("Неправильный пароль")
+        #    else:
+        #        raise serializers.ValidationError("Пользователь с указанным email не найден")
 
 
-    class Meta:
-        model = User
-        fields = ["password", "email"]
+    # class Meta:
+    #     model = User
+    #     fields = ["password", "email"]
 
 
 class PasswordChangeSerializer(serializers.Serializer):
