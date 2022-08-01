@@ -1,3 +1,4 @@
+from tabnanny import check
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import (CharFilter, DjangoFilterBackend,
                                            FilterSet, NumberFilter)
@@ -11,6 +12,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.generics import GenericAPIView, RetrieveAPIView
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from django.contrib.auth.hashers import check_password
 
 from recipes.models import Ingredient, Recipe, Tag
 from .models import User
@@ -22,8 +26,8 @@ from .serializers import (RegistrationSerializer, UserSerializer, UserIDSerializ
 
 class UserAPIList(generics.ListCreateAPIView):
     queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly)
+    serializer_class = UserIDSerializer
+    permission_classes = (AllowAny,)
     pagination_class = LimitOffsetPagination
 
 class UserAPIUpdate(generics.RetrieveAPIView):
@@ -38,8 +42,6 @@ class UserAPIDestroy(generics.RetrieveDestroyAPIView):
     permission_classes = (IsAuthenticated)
 
 
-
-
 class RegisterView(APIView):
     """
     Анонимный пользователь высылает JSON c данными для регистрации.
@@ -52,7 +54,6 @@ class RegisterView(APIView):
         users = User.objects.all()
         serializer = RegistrationSerializer(users, many=True)
         return Response(serializer.data)
-               
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -77,7 +78,6 @@ class UserMeView(RetrieveAPIView):
 class UserIDView(RetrieveAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = UserIDSerializer
-    pagination_class = LimitOffsetPagination
 
     queryset = User.objects.all()
 
@@ -88,32 +88,21 @@ class UserIDView(RetrieveAPIView):
         )
 
 
-class LoginView(APIView):
+class LoginView(ObtainAuthToken):
     permission_classes = (AllowAny,)
     serializer_class = LoginSerializer
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            email = serializer.data.get("email")
-            user = User.objects.filter(email=email).first()
-            return Response(
-                self.get_token_for_user(user), status.HTTP_200_OK
-            )
-        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
-    
-    def get_token_for_user(self, user):
-        refresh = RefreshToken.for_user(user)
-        return {
-            "auth_token": str(refresh.access_token),
-        }
-
-class LogoutView(APIView):
-    permission_classes = (IsAuthenticated,)
-
-    def post(self, request):
-        request.user.access_token.delete()
-        return Response(status.HTTP_200_OK)
+        serializer.is_valid(raise_exception=True)
+        password = serializer.data.get("password")
+        email = serializer.data.get("email")
+        user = User.objects.filter(email=email).first()
+        if not check_password(password, user.password):
+            return Response("Неверный пароль", status.HTTP_400_BAD_REQUEST)
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({"auth_token": token.key}, status.HTTP_200_OK)
+        # return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
 
 class PasswordChangeView(APIView):
@@ -126,10 +115,12 @@ class PasswordChangeView(APIView):
         if serializer.is_valid():
             current_password = serializer.data.get("current_password")
             new_password = serializer.data.get("new_password")
-            if not request.user.password == current_password:
-                return Response("Неверный пароль", status.HTTP_400_BAD_REQUEST)
-            request.user.password = new_password
-            request.user.save()
-            return Response(None, status.HTTP_204_NO_CONTENT)
+            # if not request.user.password == current_password:
+            #    return Response("Неверный пароль", status.HTTP_400_BAD_REQUEST)
+            z = (request.user.check_password(current_password))
+            #    return Response("Неверный пароль", status.HTTP_400_BAD_REQUEST)
+            # request.user.password = new_password
+            # request.user.save()
+            # return Response("dsaf", status.HTTP_204_NO_CONTENT)
+            return Response("dsaf", status.HTTP_200_OK)
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
-        

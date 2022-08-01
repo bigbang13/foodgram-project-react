@@ -1,6 +1,6 @@
 from django.urls import include, path, re_path
 from rest_framework.routers import DefaultRouter
-
+from users.views import LoginView, PasswordChangeView, UserAPIList
 app_name = "api"
 
 router = DefaultRouter()
@@ -20,8 +20,9 @@ router = DefaultRouter()
 
 
 urlpatterns = [
+    path("auth/token/login/", LoginView.as_view()),
+    path("users/", UserAPIList.as_view()),
     path("", include(router.urls)),
-    # path("users/", include(user_urls)),
-    path("auth/", include('djoser.urls')),
+    path("", include('djoser.urls')),
     re_path(r"^auth/", include('djoser.urls.authtoken')),
 ]

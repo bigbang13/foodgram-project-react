@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate
 from djoser.serializers import UserSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
+from rest_framework.authtoken.models import Token
 from rest_framework.fields import CurrentUserDefault
 
 from users.models import User, ROLE_CHOICES
@@ -13,7 +14,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(required=True, max_length=150)
     last_name = serializers.CharField(required=True, max_length=150)
     password = serializers.CharField(write_only=True, required=True, max_length=150)
-
 
     def validate_email(self, value):
         """Email должен быть уникальным."""
@@ -31,7 +31,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
         if User.objects.filter(username=value).exists():
             raise serializers.ValidationError("Username должен быть уникальным")
         return value
-    
 
     class Meta:
         model = User
@@ -41,7 +40,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 class UserIDSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("email", "id", "username", "first_name", "last_name")
+        fields = ("email", "id", "username", "first_name", "last_name", "password")
 
 
 class LoginSerializer(serializers.Serializer):
@@ -49,39 +48,14 @@ class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
 
-    def validate(self, value):
-        """Проверка соответствия пары email-pwd"""
-        password = value.get("password")
-        email = value.get("email")
-        
-        self.user = authenticate(
-            request=self.context.get("request"), email=email, password=password
-        )
-        return value
-        # if email and password:
-        #    user = User.objects.filter(email=email).first()
-        #    if user:
-        #        if user.password == password:
-        #            return user
-        #        else:
-        #            raise serializers.ValidationError("Неправильный пароль")
-        #    else:
-        #        raise serializers.ValidationError("Пользователь с указанным email не найден")
-
-
-    # class Meta:
-    #     model = User
-    #     fields = ["password", "email"]
-
-
 class PasswordChangeSerializer(serializers.Serializer):
-    new_password =  serializers.CharField()
+    new_password = serializers.CharField()
     current_password = serializers.CharField()
 
     def validate(self, value):
         """Current_password должен совпадать с текущим паролем."""
         current_password = value.get("current_password")
         new_password = value.get("new_password")
-        if current_password==new_password:
+        if current_password == new_password:
             raise serializers.ValidationError("Новый пароль не должен совпадать с действующим")
         return value
