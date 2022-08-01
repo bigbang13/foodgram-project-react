@@ -1,26 +1,22 @@
-from tabnanny import check
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import (CharFilter, DjangoFilterBackend,
                                            FilterSet, NumberFilter)
 from rest_framework import filters, status, viewsets, generics
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import (AllowAny, IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.generics import GenericAPIView, RetrieveAPIView
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.hashers import check_password
 
-from recipes.models import Ingredient, Recipe, Tag
 from .models import User
 
 from api.permissions import IsAdminOrReadOnly, UserPermission
-from .serializers import (RegistrationSerializer, UserSerializer, UserIDSerializer, LoginSerializer, PasswordChangeSerializer)
+from .serializers import (RegistrationSerializer, UserIDSerializer, LoginSerializer, PasswordChangeSerializer)
 
 
 
@@ -29,17 +25,6 @@ class UserAPIList(generics.ListCreateAPIView):
     serializer_class = UserIDSerializer
     permission_classes = (AllowAny,)
     pagination_class = LimitOffsetPagination
-
-class UserAPIUpdate(generics.RetrieveAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly)
-
-
-class UserAPIDestroy(generics.RetrieveDestroyAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = (IsAuthenticated)
 
 
 class RegisterView(APIView):
