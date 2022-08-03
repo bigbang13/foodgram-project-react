@@ -21,7 +21,7 @@ from api.permissions import IsAdminOrReadOnly, UserPermission
 from users.models import User
 
 from .models import FavoriteRecipes, Ingredient, Recipe, Tag, ShoppingCart
-from .serializers import FavoriteRecipesSerializer, IngredientSerializer, RecipeSerializer, TagSerializer, ShoppingCartSerializer
+from .serializers import FavoriteRecipesSerializer, IngredientSerializer, RecipeSerializer, TagSerializer, ShoppingCartSerializer, RecipePostSerializer
 from .utils import create_delete
 
 
@@ -45,21 +45,13 @@ class RecipeViewSet(ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,)
     pagination_class = LimitOffsetPagination
 
-#    def get_image(self, request):
-#        data = request.get("image")
-#        img_name = request.get("name")
-#        format, imgstr = data.split(';base64,')
-#        ext = format.split('/')[-1]
-#        image_file = ContentFile(base64.b64decode(imgstr), name=img_name + ext)
-#        return image_filer
-
     @action(
         methods=["post", "delete"],
         url_path="(?P<id>[0-9]+)/shopping_cart",
         detail=False
     )
     def shopping_cart(self, request, **kwargs):
-        return create_delete(self, ShoppingCart, ShoppingCartSerializer, request, **kwargs)
+        return create_delete(self, ShoppingCart, ShoppingCartSerializer, RecipePostSerializer, request, **kwargs)
 
     @action(
         methods=["post", "delete"],
@@ -67,4 +59,4 @@ class RecipeViewSet(ModelViewSet):
         detail=False
     )
     def favorite_recipes(self, request, **kwargs):
-        return create_delete(self, FavoriteRecipes, FavoriteRecipesSerializer, request, **kwargs)
+        return create_delete(self, FavoriteRecipes, FavoriteRecipesSerializer, RecipePostSerializer, request, **kwargs)

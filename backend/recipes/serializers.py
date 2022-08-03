@@ -40,6 +40,12 @@ class FavoriteRecipesSerializer(serializers.ModelSerializer):
         fields = ('id', 'user', 'recipe')
 
 
+class RecipePostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')
+
+
 class RecipeIngredientSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')
