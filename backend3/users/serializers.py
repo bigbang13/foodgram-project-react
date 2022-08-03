@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from django.contrib.auth.hashers import make_password
 
 from users.models import User
 
@@ -34,7 +33,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
             )
         return value
 
-
     class Meta:
         model = User
         fields = ("email", "id", "username", "first_name", "last_name", "password")
@@ -43,7 +41,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 class UserIDSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("email", "id", "username", "first_name", "last_name")
+        fields = ("email", "id", "username", "first_name", "last_name", "password")
 
 
 class LoginSerializer(serializers.Serializer):

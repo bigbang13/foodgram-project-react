@@ -1,23 +1,22 @@
-from django.contrib.auth.hashers import check_password
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import (CharFilter, DjangoFilterBackend,
                                            FilterSet, NumberFilter)
-from rest_framework import filters, generics, status, viewsets
-from rest_framework.authtoken.models import Token
-from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework import filters, status, viewsets, generics
 from rest_framework.decorators import action
-from rest_framework.generics import GenericAPIView, RetrieveAPIView
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import (AllowAny, IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from api.permissions import IsAdminOrReadOnly, UserPermission
+from rest_framework.generics import GenericAPIView, RetrieveAPIView
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from django.contrib.auth.hashers import check_password
 
 from .models import User
-from .serializers import (LoginSerializer, RegistrationSerializer,
-                          UserIDSerializer)
+
+from api.permissions import IsAdminOrReadOnly, UserPermission
+from .serializers import (RegistrationSerializer, UserIDSerializer, LoginSerializer)
 
 
 class UserAPIList(generics.ListCreateAPIView):

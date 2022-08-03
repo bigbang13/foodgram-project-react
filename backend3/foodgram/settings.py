@@ -105,6 +105,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# PASSWORD_HASHERS = (
+#    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+# )
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
@@ -150,11 +153,11 @@ EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
 
 DJOSER = {
     'HIDE_USERS': False,
-    # 'SET_PASSWORD': True,
+    'SET_PASSWORD': True,
     'SERIALIZERS': {
         'user': 'users.serializers.UserIDSerializer',
         'current_user': 'users.serializers.UserIDSerializer',
-        'user_create': 'users.serializers.RegistrationSerializer',
+        # 'user_create': 'users.serializers.RegistrationSerializer',
         'token_create': 'users.serializers.LoginSerializer',
     },
     'PERMISSIONS': {

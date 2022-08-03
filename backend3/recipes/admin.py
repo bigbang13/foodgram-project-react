@@ -1,13 +1,13 @@
 from django.contrib import admin
 
-from .models import Ingredient, Recipe, Tag
+from .models import Recipe, Ingredient, Tag
 
 
 class RecipeAdmin(admin.ModelAdmin):
     list_display = (
         "name",
-        # "get_ingredients",
-        # "get_tags",
+        "get_ingredients",
+        "get_tags",
         "image",
         "text",
         "cooking_time",

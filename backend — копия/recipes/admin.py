@@ -6,8 +6,8 @@ from .models import Ingredient, Recipe, Tag
 class RecipeAdmin(admin.ModelAdmin):
     list_display = (
         "name",
-        # "get_ingredients",
-        # "get_tags",
+        "get_ingredients",
+        "get_tags",
         "image",
         "text",
         "cooking_time",

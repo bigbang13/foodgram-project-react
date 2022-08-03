@@ -1,5 +1,8 @@
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
+import base64
+from PIL import Image
+from io import BytesIO
 from users.serializers import UserIDSerializer
 from drf_extra_fields.fields import Base64ImageField
 from .models import (FavoriteRecipes, Ingredient, Recipe, RecipeIngredient,
@@ -82,9 +85,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if request is None or request.user.is_anonymous:
             return False
-        return FavoriteRecipes.objects.filter(
-            user=request.user, recipe=obj
-        ).exists()
+        return FavoriteRecipes.objects.filter(user=request.user, recipe=obj).exists()
 
     def get_is_in_shopping_cart(self, obj):
         """'Показывает есть ли рецепт в списке покупок у текущего юзера"""
@@ -98,6 +99,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """'Переопределяем для сохранения ингредиентов и тегов"""
         image = validated_data.pop('image')
+        # image = Image.open(BytesIO(base64.b64decode(image_base64)))
         author = self.context['request'].user
         recipe = Recipe.objects.create(
             image=image, author=author, **validated_data
