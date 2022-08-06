@@ -1,28 +1,22 @@
-import base64
-
-from django.contrib.auth.hashers import check_password
-from django.core.files.base import ContentFile
-from django.shortcuts import get_object_or_404
+from django.http import HttpResponse
+from api.permissions import IsAdminOrReadOnly, IsAuthorOrStaff, UserPermission
+from api.permissions import IsAuthorOrStaff
 from django_filters.rest_framework import (CharFilter, DjangoFilterBackend,
                                            FilterSet, NumberFilter)
-from rest_framework import filters, generics, status, viewsets
-from rest_framework.authtoken.models import Token
-from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework import filters
 from rest_framework.decorators import action
-from rest_framework.generics import GenericAPIView, RetrieveAPIView
+from rest_framework.exceptions import ParseError
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import (AllowAny, IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
-from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
-
-from api.permissions import IsAdminOrReadOnly, UserPermission
 from users.models import User
-
-from .models import FavoriteRecipes, Ingredient, Recipe, Tag, ShoppingCart
-from .serializers import FavoriteRecipesSerializer, IngredientSerializer, RecipeSerializer, TagSerializer, ShoppingCartSerializer, RecipePostSerializer
+from .models import FavoriteRecipes, Ingredient, Recipe, ShoppingCart, Tag, RecipeIngredient
+from .serializers import (FavoriteRecipesSerializer, IngredientSerializer,
+                          RecipePostSerializer, RecipeSerializer,
+                          ShoppingCartSerializer, TagSerializer)
 from .utils import create_delete
+from .filters import RecipeFilter
 
 
 class TagViewSet(ReadOnlyModelViewSet):
@@ -37,26 +31,87 @@ class IngredientViewSet(ReadOnlyModelViewSet):
     serializer_class = IngredientSerializer
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = LimitOffsetPagination
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ['name']
 
 
 class RecipeViewSet(ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAuthenticatedOrReadOnly, IsAuthorOrStaff)
     pagination_class = LimitOffsetPagination
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = RecipeFilter
 
     @action(
         methods=["post", "delete"],
-        url_path="(?P<id>[0-9]+)/shopping_cart",
-        detail=False
+        url_path="(?P<recipe_id>[\d]+)/shopping_cart",
+        detail=False,
+        permission_classes=[IsAuthenticated],
     )
     def shopping_cart(self, request, **kwargs):
-        return create_delete(self, ShoppingCart, ShoppingCartSerializer, RecipePostSerializer, request, **kwargs)
+        return create_delete(
+            self,
+            ShoppingCart,
+            ShoppingCartSerializer,
+            RecipePostSerializer,
+            request,
+            **kwargs
+        )
 
     @action(
         methods=["post", "delete"],
-        url_path="(?P<id>[0-9]+)/favorite",
-        detail=False
+        url_path="(?P<recipe_id>[\d]+)/favorite",
+        detail=False,
+        permission_classes=[IsAuthenticated],
     )
     def favorite_recipes(self, request, **kwargs):
-        return create_delete(self, FavoriteRecipes, FavoriteRecipesSerializer, RecipePostSerializer, request, **kwargs)
+        return create_delete(
+            self,
+            FavoriteRecipes,
+            FavoriteRecipesSerializer,
+            RecipePostSerializer,
+            request,
+            **kwargs
+        )
+
+    @action(
+        methods=["get"],
+        url_path="download_shopping_cart",
+        detail=False,
+        permission_classes=[IsAuthenticated],
+    )
+    def download_shopping_cart(self, request):
+        spisok = Recipe.objects.filter(
+            shopping_cart__user=self.request.user
+        ).all()
+        data = dict()
+        if not spisok:
+            raise ParseError('Нет рецептов в корзине')
+        for recipe in spisok:
+            ingredients = RecipeIngredient.objects.filter(
+                recipe=recipe
+            ).all()
+            for i in ingredients:
+                if f'{i.ingredient.id}' in data:
+
+                    data[
+                        f'{i.ingredient.id}'
+                    ]['amount'] += i.amount
+                else:
+                    data.update(
+                        {
+                            f'{i.ingredient.id}': {
+                                'name': i.ingredient.name,
+                                'measurement_unit':
+                                    i.ingredient.measurement_unit,
+                                'amount': i.amount
+                            }
+                        }
+                    )
+        data = dict(sorted(data.items(), key=lambda item: item[1]['name']))
+        data = HttpResponse(data, content_type='text/plain')
+        data['Content-Disposition'] = (
+            'attachment; filename="shopping_cart"'
+        )
+        return data

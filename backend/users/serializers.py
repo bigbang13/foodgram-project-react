@@ -1,7 +1,6 @@
 from rest_framework import serializers
-from django.contrib.auth.hashers import make_password
-
-from users.models import User
+from .models import Subscription, User
+from recipes.models import Recipe
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -34,16 +33,40 @@ class RegistrationSerializer(serializers.ModelSerializer):
             )
         return value
 
-
     class Meta:
         model = User
-        fields = ("email", "id", "username", "first_name", "last_name", "password")
+        fields = (
+            "email",
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "password"
+        )
 
 
 class UserIDSerializer(serializers.ModelSerializer):
+    is_subscribed = serializers.SerializerMethodField()
+
     class Meta:
         model = User
-        fields = ("email", "id", "username", "first_name", "last_name")
+        fields = (
+            "email",
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "is_subscribed"
+        )
+
+    def get_is_subscribed(self, obj):
+        request = self.context.get('request')
+        if request.user.is_anonymous or request is None:
+            return False
+        return Subscription.objects.filter(
+            user=request.user,
+            author=obj
+        ).exists()
 
 
 class LoginSerializer(serializers.Serializer):
@@ -64,3 +87,44 @@ class PasswordChangeSerializer(serializers.Serializer):
                 "Новый пароль не должен совпадать с действующим"
             )
         return value
+
+
+class SubscriptionRecipeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Recipe
+        fields = (
+            'id',
+            'name',
+            'image',
+            'cooking_time',
+        )
+
+
+class SubscriptionSerializer(serializers.Serializer):
+    email = serializers.ReadOnlyField(source='author.email')
+    id = serializers.ReadOnlyField(source='author.id')
+    username = serializers.ReadOnlyField(source='author.username')
+    first_name = serializers.ReadOnlyField(source='author.first_name')
+    last_name = serializers.ReadOnlyField(source='author.last_name')
+    is_subscribed = serializers.SerializerMethodField()
+    recipes = serializers.SerializerMethodField()
+    recipes_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Subscription
+        fields = ('id', 'email', 'username', 'first_name', 'last_name',
+                  'is_subscribed', 'recipes', 'recipes_count')
+
+    def get_is_subscribed(self, obj):
+        return Subscription.objects.filter(
+            user=obj.user,
+            author=obj.author
+        ).exists()
+
+    def get_recipes(self, obj):
+        recipes = Recipe.objects.filter(author=obj)
+        return SubscriptionRecipeSerializer(recipes, many=True).data
+
+    def get_recipes_count(self, obj):
+        return Recipe.objects.filter(author=obj).count()
