@@ -7,14 +7,6 @@ from users.views import LoginView, UserAPIList, SubscriptionViewSet, SubscribeVi
 app_name = "api"
 
 router = DefaultRouter()
-# router.register(r'follow', FollowViewSet, basename='follow')
-# router.register(
-#    'users/(<int:user_id>)/subscribe',
-#    SubscribeViewSet,
-#    basename='subscribe'
-# )
-# router.register('subscriptions', SubscriptionViewSet, basename='subscriptions')
-# router.register(r'users', UserAPIList, basename='users')
 
 urlpatterns = [
     path("", include(router.urls)),
