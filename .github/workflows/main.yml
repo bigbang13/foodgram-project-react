@@ -73,8 +73,10 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_backend
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend
             sudo docker-compose stop
             sudo docker-compose rm backend
+            sudo docker-compose rm frontend
             touch .env
             echo SECRET_KEY="${{ secrets.SECRET_KEY }}" >> .env
             echo DEBUG_DJANGO="${{ secrets.DEBUG_DJANGO }}" >> .env
