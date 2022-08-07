@@ -4,12 +4,12 @@ from datetime import timedelta
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '#b15&t^l36u-_btw5uq$tgkb+p_-+pdvcyd!ygcu=nh&hhyz%2'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG_DJANGO', False)
 
-ALLOWED_HOSTS = ["*", "testserver"]
+ALLOWED_HOSTS = ['YOUR_IP', 'web', 'backend', 'localhost', '127.0.0.1']
 
 # Application definition
 
@@ -75,14 +75,8 @@ DATABASES = {
         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
         'HOST': os.getenv('DB_HOST'),
         'PORT': os.getenv('DB_PORT')
-   }
+    }
 }
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-#     }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -101,7 +95,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
@@ -147,7 +140,6 @@ EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
 
 DJOSER = {
     'HIDE_USERS': False,
-    # 'SET_PASSWORD': True,
     'SERIALIZERS': {
         'user': 'users.serializers.UserIDSerializer',
         'current_user': 'users.serializers.UserIDSerializer',
@@ -155,6 +147,7 @@ DJOSER = {
         'token_create': 'users.serializers.LoginSerializer',
     },
     'PERMISSIONS': {
+        'user_create': ['rest_framework.permissions.AllowAny'],
         'user': ['rest_framework.permissions.IsAuthenticated'],
         'user_list': ['rest_framework.permissions.AllowAny'],
     },
