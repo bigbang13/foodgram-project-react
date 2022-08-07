@@ -1,22 +1,18 @@
 from django.contrib.auth.hashers import check_password, make_password
-from rest_framework import filters, generics, status, viewsets
+from django.shortcuts import get_object_or_404
+# from djoser.views import UserViewSet
+from rest_framework import generics, status
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.decorators import action
-from rest_framework.generics import RetrieveDestroyAPIView, ListAPIView
+from rest_framework.generics import ListAPIView, RetrieveDestroyAPIView
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.permissions import (AllowAny, IsAuthenticated,
-                                        IsAuthenticatedOrReadOnly)
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.permissions import IsAdminOrReadOnly, UserPermission
-from .mixins import CreateDestroyListViewSet, CreateListViewSet
 from .models import Subscription, User
 from .serializers import (LoginSerializer, RegistrationSerializer,
                           SubscriptionSerializer, UserIDSerializer)
-from djoser.views import UserViewSet
-from django.shortcuts import get_object_or_404
 
 
 class UserAPIList(generics.ListCreateAPIView):
@@ -42,7 +38,7 @@ class RegisterView(APIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            user = User.objects.create(
+            User.objects.create(
                 **serializer.validated_data, role="user"
             )
         else:

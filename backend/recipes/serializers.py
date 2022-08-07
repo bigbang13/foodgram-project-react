@@ -1,7 +1,8 @@
+from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from users.serializers import UserIDSerializer
-from drf_extra_fields.fields import Base64ImageField
+
 from .models import (FavoriteRecipes, Ingredient, Recipe, RecipeIngredient,
                      ShoppingCart, Tag)
 from .utils import save_tags_and_ingredients

@@ -1,22 +1,21 @@
+from api.permissions import IsAdminOrReadOnly, IsAuthorOrStaff
 from django.http import HttpResponse
-from api.permissions import IsAdminOrReadOnly, IsAuthorOrStaff, UserPermission
-from api.permissions import IsAuthorOrStaff
-from django_filters.rest_framework import (CharFilter, DjangoFilterBackend,
-                                           FilterSet, NumberFilter)
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.permissions import (AllowAny, IsAuthenticated,
+from rest_framework.permissions import (IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
-from users.models import User
-from .models import FavoriteRecipes, Ingredient, Recipe, ShoppingCart, Tag, RecipeIngredient
+
+from .filters import RecipeFilter
+from .models import (FavoriteRecipes, Ingredient, Recipe, RecipeIngredient,
+                     ShoppingCart, Tag)
 from .serializers import (FavoriteRecipesSerializer, IngredientSerializer,
                           RecipePostSerializer, RecipeSerializer,
                           ShoppingCartSerializer, TagSerializer)
 from .utils import create_delete
-from .filters import RecipeFilter
 
 
 class TagViewSet(ReadOnlyModelViewSet):
@@ -45,7 +44,7 @@ class RecipeViewSet(ModelViewSet):
 
     @action(
         methods=["post", "delete"],
-        url_path="(?P<recipe_id>[\d]+)/shopping_cart",
+        url_path="(?P<recipe_id>[0-9]+)/shopping_cart",
         detail=False,
         permission_classes=[IsAuthenticated],
     )
@@ -61,7 +60,7 @@ class RecipeViewSet(ModelViewSet):
 
     @action(
         methods=["post", "delete"],
-        url_path="(?P<recipe_id>[\d]+)/favorite",
+        url_path="(?P<recipe_id>[0-9]+)/favorite",
         detail=False,
         permission_classes=[IsAuthenticated],
     )

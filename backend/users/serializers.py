@@ -1,6 +1,7 @@
-from rest_framework import serializers
-from .models import Subscription, User
 from recipes.models import Recipe
+from rest_framework import serializers
+
+from .models import Subscription, User
 
 
 class RegistrationSerializer(serializers.ModelSerializer):

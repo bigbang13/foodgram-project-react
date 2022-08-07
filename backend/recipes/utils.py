@@ -18,7 +18,9 @@ def save_tags_and_ingredients(self, obj):
         )
 
 
-def create_delete(self, models_class, save_serial, post_serial, request, **kwargs):
+def create_delete(
+    self, models_class, save_serial, post_serial, request, **kwargs
+):
     in_shop_cart = models_class.objects.filter(
         user=self.request.user, recipe=kwargs["recipe_id"]
     ).exists()
@@ -37,7 +39,10 @@ def create_delete(self, models_class, save_serial, post_serial, request, **kwarg
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     if request.method == "DELETE":
         if not in_shop_cart:
-            return Response("Рецепта нет в списке", status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                "Рецепта нет в списке",
+                status=status.HTTP_400_BAD_REQUEST
+            )
         get_object_or_404(
             models_class, user=self.request.user, recipe=kwargs["recipe_id"]
         ).delete()
