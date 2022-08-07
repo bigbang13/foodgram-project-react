@@ -68,10 +68,10 @@ class SubscriptionViewSet(ListAPIView):
     serializer_class = SubscriptionSerializer
     pagination_class = LimitOffsetPagination
 
-    def get_queryset(self):
-        # queryset = self.queryset.filter(following__user=self.request.user)
-        # queryset = queryset.filter(user=self.request.user)
-        return self.queryset.filter(following__user=self.request.user)
+    # def get_queryset(self):
+    # queryset = self.queryset.filter(following__user=self.request.user)
+    # queryset = queryset.filter(user=self.request.user)
+    # return self.queryset.filter(following__user=self.request.user)
 
 
 class SubscribeViewSet(RetrieveDestroyAPIView):
