@@ -12,6 +12,7 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from .filters import RecipeFilter
 from .models import (FavoriteRecipes, Ingredient, Recipe, RecipeIngredient,
                      ShoppingCart, Tag)
+from .paginations import RecipePagination
 from .serializers import (FavoriteRecipesSerializer, IngredientSerializer,
                           RecipePostSerializer, RecipeSerializer,
                           ShoppingCartSerializer, TagSerializer)
@@ -28,17 +29,15 @@ class TagViewSet(ReadOnlyModelViewSet):
 class IngredientViewSet(ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    permission_classes = (IsAdminOrReadOnly,)
-    # pagination_class = LimitOffsetPagination
     filter_backends = (filters.SearchFilter,)
-    search_fields = ['^name']
+    search_fields = ['name']
 
 
 class RecipeViewSet(ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     permission_classes = (IsAuthenticatedOrReadOnly, IsAuthorOrStaff)
-    pagination_class = LimitOffsetPagination
+    pagination_class = RecipePagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
