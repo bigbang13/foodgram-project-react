@@ -18,5 +18,4 @@ class SubscriptionAdmin(admin.ModelAdmin):
     autocomplete_fields = ('author', 'user')
 
 
-admin.site.unregister(User)
 admin.site.register(User, FoodgramUserAdmin)
