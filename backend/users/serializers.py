@@ -66,28 +66,8 @@ class UserIDSerializer(serializers.ModelSerializer):
             return False
         return Subscription.objects.filter(
             user=request.user,
-            author=obj
+            author=obj.id
         ).exists()
-
-
-class LoginSerializer(serializers.Serializer):
-    password = serializers.CharField()
-    email = serializers.EmailField()
-
-
-class PasswordChangeSerializer(serializers.Serializer):
-    new_password = serializers.CharField()
-    current_password = serializers.CharField()
-
-    def validate(self, value):
-        """Current_password должен совпадать с текущим паролем."""
-        current_password = value.get("current_password")
-        new_password = value.get("new_password")
-        if current_password == new_password:
-            raise serializers.ValidationError(
-                "Новый пароль не должен совпадать с действующим"
-            )
-        return value
 
 
 class SubscriptionRecipeSerializer(serializers.ModelSerializer):
