@@ -20,7 +20,7 @@ class SubscribeViewSet(UserViewSet):
         methods=['post'],
         detail=True,
         permission_classes=[IsAuthenticated],
-        url_path=r'(?P<id>[0-9]+)/subscribe'
+        url_path='(?P<id>[0-9]+)/subscribe'
     )
     def subscribe(self, request, id=None):
         user = request.user
@@ -45,7 +45,7 @@ class SubscribeViewSet(UserViewSet):
         methods=['delete'],
         detail=True,
         permission_classes=[IsAuthenticated],
-        url_path=r'(?P<id>[0-9]+)/subscribe'
+        url_path='(?P<id>[0-9]+)/subscribe'
     )
     def unsubscribe(self, request, id=None):
         user = request.user
