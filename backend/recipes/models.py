@@ -114,13 +114,13 @@ class RecipeIngredient(models.Model):
         Recipe,
         on_delete=models.CASCADE,
         verbose_name="Рецепт",
-        related_name="ingredients"
+        related_name="recipeingr"
     )
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
         verbose_name="Ингредиент",
-        related_name="recipe"
+        related_name="recipeingr"
     )
     amount = models.PositiveIntegerField(
         verbose_name="Количество",
