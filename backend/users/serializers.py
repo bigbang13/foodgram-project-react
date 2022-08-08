@@ -10,7 +10,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(required=True, max_length=150)
     last_name = serializers.CharField(required=True, max_length=150)
 
-
     def validate_email(self, value):
         """Email должен быть уникальным."""
         lower_email = value.lower()
