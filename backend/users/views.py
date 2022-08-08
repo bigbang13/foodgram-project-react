@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
 from rest_framework import status
@@ -15,6 +16,10 @@ User = get_user_model()
 
 class SubscribeViewSet(UserViewSet):
     pagination_class = LimitOffsetPagination
+
+    def perform_create(self, serializer):
+        hash_pwd = make_password(serializer.validated_data.get("password"))
+        serializer.save(password=hash_pwd)
 
     @action(
         methods=['post'],
