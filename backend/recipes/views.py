@@ -29,7 +29,7 @@ class IngredientViewSet(ReadOnlyModelViewSet):
     serializer_class = IngredientSerializer
     pagination_class = None
     filter_backends = (filters.SearchFilter,)
-    search_fields = ['name']
+    search_fields = ['^name', ]
 
 
 class RecipeViewSet(ModelViewSet):
