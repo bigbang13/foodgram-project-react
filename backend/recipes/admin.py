@@ -6,12 +6,15 @@ from .models import Ingredient, Recipe, Tag
 class RecipeAdmin(admin.ModelAdmin):
     list_display = (
         "name",
-        # "get_ingredients",
-        # "get_tags",
-        "image",
-        "text",
-        "cooking_time",
+        "author",
     )
+    list_filter = ['name', 'author', 'tags', ]
+    readonly_fields = ('count_fav',)
+
+    def count_fav(self, obj):
+        return obj.favorites.count()
+
+    count_fav.short_description = 'Число добавлений в избранное'
 
 
 class TagAdmin(admin.ModelAdmin):
@@ -29,6 +32,7 @@ class IngredientAdmin(admin.ModelAdmin):
         "name",
         "measurement_unit",
     )
+    list_filter = ['name',]
 
 
 admin.site.register(Recipe, RecipeAdmin)
