@@ -8,7 +8,7 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from backend.api.permissions import IsAdminOrReadOnly
+from api.permissions import IsAdminOrReadOnly
 
 from .models import Subscription
 from .serializers import SubscriptionSerializer, UserIDSerializer
