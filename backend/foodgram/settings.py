@@ -26,7 +26,7 @@ INSTALLED_APPS = [
     'users',
     'recipes',
     'api',
-    'import-export',
+    'import_export',
 ]
 
 MIDDLEWARE = [
