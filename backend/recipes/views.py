@@ -86,7 +86,7 @@ class RecipeViewSet(ModelViewSet):
         if not spisok:
             raise ParseError('Нет рецептов в корзине')
         for recept in spisok:
-            ingredients = recept.recipes.all()
+            ingredients = recept.recipeingr.all()
             for i in ingredients:
                 name = i.ingredient.name
                 amount = i.amount
