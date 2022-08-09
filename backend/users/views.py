@@ -69,7 +69,7 @@ class SubscribeViewSet(UserViewSet):
         methods=['get'],
         detail=False,
         permission_classes=[IsAuthenticated],
-        url_path='subscribtions'
+        url_path='subscriptions'
     )
     def subscriptions(self, request):
         user = request.user
