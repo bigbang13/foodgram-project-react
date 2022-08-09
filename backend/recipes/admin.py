@@ -9,12 +9,10 @@ class RecipeAdmin(admin.ModelAdmin):
         "author",
     )
     list_filter = ['name', 'author', 'tags', ]
-    readonly_fields = ('count_fav',)
+    readonly_fields = ('count_favorite',)
 
-    def count_fav(self, obj):
-        return obj.favorites.count()
-
-    count_fav.short_description = 'Число добавлений в избранное'
+    def count_favorite(self, obj):
+        return obj.favorite.count()
 
 
 class TagAdmin(admin.ModelAdmin):
