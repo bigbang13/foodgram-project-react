@@ -9,8 +9,7 @@ from rest_framework.permissions import (IsAuthenticated,
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from .filters import RecipeFilter
-from .models import (FavoriteRecipes, Ingredient, Recipe,
-                     ShoppingCart, Tag)
+from .models import FavoriteRecipes, Ingredient, Recipe, ShoppingCart, Tag
 from .paginations import RecipePagination
 from .serializers import (FavoriteRecipesSerializer, IngredientSerializer,
                           RecipePostSerializer, RecipeSerializer,
