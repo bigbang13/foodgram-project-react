@@ -86,14 +86,12 @@ class RecipeViewSet(ModelViewSet):
         data = {}
         if not spisok:
             raise ParseError('Нет рецептов в корзине')
-        for recipe in spisok:
-            ingredients = RecipeIngredient.objects.filter(
-                recipe=recipe
-            ).all()
+        for recept in spisok:
+            ingredients = recept.recipes.all()
             for i in ingredients:
-                name = i.ingredients.name
+                name = i.ingredient.name
                 amount = i.amount
-                measurement_unit = i.ingredients.measurement_unit
+                measurement_unit = i.ingredient.measurement_unit
                 if name not in data:
                     data[name] = {
                         'measurement_unit': measurement_unit,
