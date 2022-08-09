@@ -8,7 +8,7 @@ from rest_framework.permissions import (IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
-from .filters import RecipeFilter
+from .filters import IngredientSearchFilter, RecipeFilter
 from .models import FavoriteRecipes, Ingredient, Recipe, ShoppingCart, Tag
 from .paginations import RecipePagination
 from .serializers import (FavoriteRecipesSerializer, IngredientSerializer,
@@ -28,8 +28,8 @@ class IngredientViewSet(ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     pagination_class = None
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ['^name', ]
+    filter_backends = (IngredientSearchFilter, )
+    search_fields = ('^name', )
 
 
 class RecipeViewSet(ModelViewSet):
