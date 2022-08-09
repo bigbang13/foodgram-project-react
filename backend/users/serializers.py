@@ -78,11 +78,11 @@ class SubscriptionRecipeSerializer(serializers.ModelSerializer):
 
 
 class SubscriptionSerializer(serializers.Serializer):
-    email = serializers.ReadOnlyField(source='author.email')
-    id = serializers.ReadOnlyField(source='author.id')
-    username = serializers.ReadOnlyField(source='author.username')
+    email = serializers.ReadOnlyField()
+    id = serializers.ReadOnlyField()
+    username = serializers.ReadOnlyField()
     first_name = serializers.ReadOnlyField()
-    last_name = serializers.ReadOnlyField(source='last_name')
+    last_name = serializers.ReadOnlyField()
     is_subscribed = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
