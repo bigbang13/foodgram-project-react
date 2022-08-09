@@ -104,11 +104,10 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """'Переопределяем для сохранения ингредиентов и тегов"""
-#        author = self.context['request'].user
-#        recipe = Recipe.objects.create(
-#            author=author, **validated_data
-#        )
-        recipe = super().create(validated_data)
+        author = self.context['request'].user
+        recipe = Recipe.objects.create(
+            author=author, **validated_data
+        )
         save_tags_and_ingredients(self, recipe)
         return recipe
 
