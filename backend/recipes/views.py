@@ -40,8 +40,8 @@ class RecipeViewSet(ModelViewSet):
     filterset_class = RecipeFilter
 
     @action(
-        methods=["post", "delete"],
-        url_path="(?P<recipe_id>[0-9]+)/shopping_cart",
+        methods=['post', 'delete'],
+        url_path='(?P<recipe_id>[0-9]+)/shopping_cart',
         detail=False,
         permission_classes=[IsAuthenticated],
     )
@@ -56,8 +56,8 @@ class RecipeViewSet(ModelViewSet):
         )
 
     @action(
-        methods=["post", "delete"],
-        url_path="(?P<recipe_id>[0-9]+)/favorite",
+        methods=['post', 'delete'],
+        url_path='(?P<recipe_id>[0-9]+)/favorite',
         detail=False,
         permission_classes=[IsAuthenticated],
     )
@@ -72,8 +72,8 @@ class RecipeViewSet(ModelViewSet):
         )
 
     @action(
-        methods=["get"],
-        url_path="download_shopping_cart",
+        methods=['get'],
+        url_path='download_shopping_cart',
         detail=False,
         permission_classes=[IsAuthenticated],
     )

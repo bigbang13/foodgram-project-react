@@ -13,10 +13,10 @@ class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = (
-            "id",
-            "name",
-            "color",
-            "slug",
+            'id',
+            'name',
+            'color',
+            'slug',
         )
 
 
@@ -24,9 +24,9 @@ class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
         fields = (
-            "id",
-            "name",
-            "measurement_unit",
+            'id',
+            'name',
+            'measurement_unit',
         )
 
 
@@ -89,7 +89,6 @@ class RecipeSerializer(serializers.ModelSerializer):
         )
 
     def get_is_favorited(self, obj):
-        """Показывает есть ли рецепт в избраном у текущего юзера"""
         request = self.context.get('request')
         if request is None or request.user.is_anonymous:
             return False
@@ -98,7 +97,6 @@ class RecipeSerializer(serializers.ModelSerializer):
         ).exists()
 
     def get_is_in_shopping_cart(self, obj):
-        """'Показывает есть ли рецепт в списке покупок у текущего юзера"""
         request = self.context.get('request')
         if request is None or request.user.is_anonymous:
             return False
@@ -107,7 +105,6 @@ class RecipeSerializer(serializers.ModelSerializer):
         ).exists()
 
     def create(self, validated_data):
-        """'Переопределяем для сохранения ингредиентов и тегов"""
         author = self.context['request'].user
         recipe = Recipe.objects.create(
             author=author, **validated_data
@@ -116,7 +113,6 @@ class RecipeSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
-        """'Переопределяем для сохранения ингредиентов и тегов"""
         instance.tags.clear()
         instance.ingredients.clear()
         save_tags_and_ingredients(self, instance)

@@ -7,8 +7,8 @@ from .models import Ingredient, Recipe, Tag
 
 class RecipeAdmin(admin.ModelAdmin):
     list_display = (
-        "name",
-        "author",
+        'name',
+        'author',
     )
     list_filter = ['name', 'author', 'tags', ]
     readonly_fields = ('count_favorite',)
@@ -19,10 +19,10 @@ class RecipeAdmin(admin.ModelAdmin):
 
 class TagAdmin(admin.ModelAdmin):
     list_display = (
-        "id",
-        "name",
-        "color",
-        "slug",
+        'id',
+        'name',
+        'color',
+        'slug',
     )
 
 
@@ -35,9 +35,9 @@ class IngredientResource(resources.ModelResource):
 class IngredientAdmin(ImportExportActionModelAdmin):
     resource_class = IngredientResource
     list_display = (
-        "id",
-        "name",
-        "measurement_unit",
+        'id',
+        'name',
+        'measurement_unit',
     )
     list_filter = ['name', ]
 

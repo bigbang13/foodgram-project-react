@@ -22,7 +22,7 @@ class SubscribeViewSet(UserViewSet):
     pagination_class = LimitOffsetPagination
 
     def perform_create(self, serializer):
-        hash_pwd = make_password(serializer.validated_data.get("password"))
+        hash_pwd = make_password(serializer.validated_data.get('password'))
         serializer.save(password=hash_pwd)
 
     @action(

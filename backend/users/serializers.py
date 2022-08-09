@@ -11,33 +11,31 @@ class RegistrationSerializer(serializers.ModelSerializer):
     last_name = serializers.CharField(required=True, max_length=150)
 
     def validate_email(self, value):
-        """Email должен быть уникальным."""
         lower_email = value.lower()
         if User.objects.filter(email=lower_email).exists():
-            raise serializers.ValidationError("Email должен быть уникальным")
+            raise serializers.ValidationError('Email должен быть уникальным')
         return lower_email
 
     def validate_username(self, value):
-        """Использовать имя 'me' в качестве username запрещено."""
-        if value.lower() == "me":
+        if value.lower() == 'me':
             raise serializers.ValidationError(
-                "Использовать имя 'me' в качестве username запрещено."
+                'Использовать имя 'me' в качестве username запрещено.'
             )
         if User.objects.filter(username=value).exists():
             raise serializers.ValidationError(
-                "Username должен быть уникальным"
+                'Username должен быть уникальным'
             )
         return value
 
     class Meta:
         model = User
         fields = (
-            "email",
-            "id",
-            "username",
-            "first_name",
-            "last_name",
-            "password"
+            'email',
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'password'
         )
 
 
@@ -47,12 +45,12 @@ class UserIDSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            "email",
-            "id",
-            "username",
-            "first_name",
-            "last_name",
-            "is_subscribed"
+            'email',
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'is_subscribed'
         )
 
     def get_is_subscribed(self, obj):
