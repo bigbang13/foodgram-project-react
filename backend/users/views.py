@@ -68,11 +68,10 @@ class SubscribeViewSet(UserViewSet):
         url_path='subscribtions'
     )
     def subscriptions(self, request):
-        user = request.user
-        queryset = Subscription.objects.filter(user=user)
-        pages = self.paginate_queryset(queryset)
+        subscriptions = User.objects.filter(following__user=self.request.user)
+        page = self.paginate_queryset(subscriptions)
         serializer = SubscriptionSerializer(
-            pages,
+            page,
             many=True,
             context={'request': request}
         )
