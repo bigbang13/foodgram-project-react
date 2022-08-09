@@ -26,7 +26,6 @@ INSTALLED_APPS = [
     'users',
     'recipes',
     'api',
-    'ingr_base_load',
 ]
 
 MIDDLEWARE = [
