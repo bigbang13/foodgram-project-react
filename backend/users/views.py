@@ -8,13 +8,18 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from backend.api.permissions import IsAdminOrReadOnly
+
 from .models import Subscription
-from .serializers import SubscriptionSerializer
+from .serializers import SubscriptionSerializer, UserIDSerializer
 
 User = get_user_model()
 
 
 class SubscribeViewSet(UserViewSet):
+    permission_classes = [IsAdminOrReadOnly]
+    queryset = User.objects.all()
+    serializer_class = UserIDSerializer
     pagination_class = LimitOffsetPagination
 
     def perform_create(self, serializer):
