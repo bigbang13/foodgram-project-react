@@ -83,7 +83,7 @@ class RecipeViewSet(ModelViewSet):
         spisok = Recipe.objects.filter(
             shopping_cart__user=self.request.user
         ).all()
-        data = dict()
+        data = {}
         if not spisok:
             raise ParseError('Нет рецептов в корзине')
         for recipe in spisok:
@@ -91,25 +91,23 @@ class RecipeViewSet(ModelViewSet):
                 recipe=recipe
             ).all()
             for i in ingredients:
-                if f'{i.ingredient.id}' in data:
-
-                    data[
-                        f'{i.ingredient.id}'
-                    ]['amount'] += i.amount
+                name = i.ingredients.name
+                amount = i.amount
+                measurement_unit = i.ingredients.measurement_unit
+                if name not in data:
+                    data[name] = {
+                        'measurement_unit': measurement_unit,
+                        'amount': amount}
                 else:
-                    data.update(
-                        {
-                            f'{i.ingredient.id}': {
-                                'name': i.ingredient.name,
-                                'measurement_unit':
-                                    i.ingredient.measurement_unit,
-                                'amount': i.amount
-                            }
-                        }
-                    )
-        data = dict(sorted(data.items(), key=lambda item: item[1]['name']))
-        data = HttpResponse(data, content_type='text/plain')
-        data['Content-Disposition'] = (
+                    data[name]['amount'] = (
+                        data[name]['amount'] + amount)
+        data_list = []
+        for index, key in enumerate(data, start=1):
+            data_list.append(
+                f'{index}. {key} - {data[key]["amount"]} '
+                f'{data[key]["measurement_unit"]}\n')
+        out_data = HttpResponse(data_list, content_type='text/plain')
+        out_data['Content-Disposition'] = (
             'attachment; filename="shopping_cart"'
         )
-        return data
+        return out_data
