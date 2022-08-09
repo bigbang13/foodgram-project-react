@@ -30,7 +30,7 @@ class IngredientAdmin(admin.ModelAdmin):
         "name",
         "measurement_unit",
     )
-    list_filter = ['name',]
+    list_filter = ['name', ]
 
 
 admin.site.register(Recipe, RecipeAdmin)
