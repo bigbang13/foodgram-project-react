@@ -20,17 +20,17 @@
 ## Как запустить проект на локальной машине:
 
 1. Установите [Docker](https://www.docker.com/get-started)
-2. Клонировать репозиторий и перейти в него в командной строке:
+2. Клонируйте репозиторий и перейдите в него в командной строке:
 ```
 git clone https://github.com/bigbang13/foodgram-project-react.git
 cd foodgram-project-react
 ```
-3. Cоздать и активировать виртуальное окружение:
+3. Cоздайте и активируйте виртуальное окружение:
 ```
 python -m venv venv
 source venv/bin/activate
 ```
-4. Установить зависимости из файла requirements.txt:
+4. Установите зависимости из файла requirements.txt:
 ```
 python -m pip install --upgrade pip
 pip install -r requirements.txt
@@ -103,7 +103,13 @@ docker-compose exec backend python manage.py collectstatic --no-input
    ```
    sudo docker-compose exec web python manage.py createsuperuser
    ```
-   
+
+## Admin зона
+- http://51.250.29.50
+- low@key.ru
+- lowkey
+- gecnjqgfhjkm
+
 ## Технологии
 - Python 3.7
 - Django 2.2.16
