@@ -121,8 +121,19 @@ class RecipeViewSet(ModelViewSet):
         font_size = 6
         p.setFont('Vlashu', font_size * mm)
         x = 15 * mm
-        y = 255 * mm
+        y = 270 * mm
         p.setFillColor(black)
+        top = 'Список покупок для рецептов'
+        p.drawString(x, y, top)
+        y -= font_size * mm
+        for key in spisok:
+            p.drawString(x, y, key)
+            y -= font_size * mm
+            if y < 25 * mm:
+                y = 270 * mm
+                p.showPage()
+                p.setFillColor(black)
+                p.setFont('Vlashu', font_size * mm)
         for key in data:
             p.drawString(x, y, key)
             x += 380
@@ -132,7 +143,7 @@ class RecipeViewSet(ModelViewSet):
             x -= 440
             y -= font_size * mm
             if y < 25 * mm:
-                y = 255 * mm
+                y = 270 * mm
                 p.showPage()
                 p.setFillColor(black)
                 p.setFont('Vlashu', font_size * mm)
