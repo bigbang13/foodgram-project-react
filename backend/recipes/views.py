@@ -1,11 +1,15 @@
-# import io
-#
+import io
+
 from api.permissions import IsAdminOrReadOnly, IsAuthorOrStaff
 from django.http import FileResponse
 from django_filters.rest_framework import DjangoFilterBackend
-from reportlab.lib.pagesizes import A4
-# from reportlab.pdfgen import canvas
-from reportlab.platypus import SimpleDocTemplate
+from reportlab.lib.colors import black
+from reportlab.lib.units import mm
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+# from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
+# from reportlab.platypus import SimpleDocTemplate
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
 from rest_framework.permissions import (IsAuthenticated,
@@ -107,15 +111,36 @@ class RecipeViewSet(ModelViewSet):
             data_list.append(
                 f'{index}. {key} - {data[key]["amount"]} '
                 f'{data[key]["measurement_unit"]}\n')
-        doc = SimpleDocTemplate('shopping_cart.pdf', pagesize=A4)
-        z = doc.build(data_list)
+        pdfmetrics.registerFont(TTFont('Vlashu', 'Vlashu.otf'))
+        buffer = io.BytesIO()
+        p = canvas.Canvas(buffer)
+        font_size = 6
+        p.setFont('Vlashu', font_size * mm)
+        x = 15 * mm
+        y = 25 * mm
+        p.setFillColor(black)
+        for key in data_list:
+            p.drawString(x, y, key)
+            x += 320
+            p.drawString(x, y, str(data_list[key][0]))
+            x += 60
+            p.drawString(x, y, data_list[key][1])
+            x -= 380
+            y += font_size * mm
+            if y > 280 * mm:
+                y = 25 * mm
+                p.showPage()
+                p.setFillColor(black)
+                p.setFont('Vlashu', font_size * mm)
+        p.setTitle('Data_list')
+        p.showPage()
+        p.save()
+        buffer.seek(0)
         return FileResponse(
-            z, as_attachment=True,
+            buffer, as_attachment=True,
             filename='shopping_cart.pdf'
         )
 
-#        buffer = io.BytesIO()
-#        p = canvas.Canvas(buffer)
 #        p.drawString(10, 10, "Список покупок.")
 #        p.showPage()
 #        p.save()
