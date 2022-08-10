@@ -43,7 +43,9 @@ class SubscribeViewSet(UserViewSet):
                 'errors': 'Вы уже подписаны на данного пользователя'
             }, status=status.HTTP_400_BAD_REQUEST)
 
-        subscribe = Subscription.objects.create(user=user, author=author)
+        subscribe = Subscription.objects.create(
+            user=user, author=author.author
+        )
         serializer = SubscriptionSerializer(
             subscribe, context={'request': request}
         )
