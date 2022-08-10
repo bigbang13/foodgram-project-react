@@ -105,16 +105,16 @@ class RecipeViewSet(ModelViewSet):
             data_list.append(
                 f'{index}. {key} - {data[key]["amount"]} '
                 f'{data[key]["measurement_unit"]}\n')
-            buffer = io.BytesIO()
-            p = canvas.Canvas(buffer)
-            p.drawString(100, 100, "Hello world.")
-            p.showPage()
-            p.save()
-            buffer.seek(0)
-            return FileResponse(
-                buffer, as_attachment=True,
-                filename='shopping_cart.pdf'
-            )
+        buffer = io.BytesIO()
+        p = canvas.Canvas(buffer)
+        p.drawString(100, 100, "Hello world.")
+        p.showPage()
+        p.save()
+        buffer.seek(0)
+        return FileResponse(
+            buffer, as_attachment=True,
+            filename='shopping_cart.pdf'
+        )
 
 #        out_data = HttpResponse(data_list, content_type='application/pdf')
 #        out_data['Content-Disposition'] = (
