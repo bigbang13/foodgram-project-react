@@ -1,5 +1,7 @@
+import io
+
 from api.permissions import IsAdminOrReadOnly, IsAuthorOrStaff
-from django.http import HttpResponse
+from django.http import FileResponse, HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from reportlab.pdfgen import canvas
 from rest_framework.decorators import action
@@ -103,15 +105,26 @@ class RecipeViewSet(ModelViewSet):
             data_list.append(
                 f'{index}. {key} - {data[key]["amount"]} '
                 f'{data[key]["measurement_unit"]}\n')
-        out_data = HttpResponse(data_list, content_type='application/pdf')
-        out_data['Content-Disposition'] = (
-            'attachment; filename="shopping_cart.pdf"'
-        )
-        p = canvas.Canvas(out_data)
-        p.setFont("Times-Roman", 14)
-        p.showPage()
-        p.save()
-        return out_data
+            buffer = io.BytesIO()
+            p = canvas.Canvas(buffer)
+            p.drawString(100, 100, "Hello world.")
+            p.showPage()
+            p.save()
+            buffer.seek(0)
+            return FileResponse(
+                buffer, as_attachment=True,
+                filename='hello.pdf'
+            )
+
+#        out_data = HttpResponse(data_list, content_type='application/pdf')
+#        out_data['Content-Disposition'] = (
+#            'attachment; filename="shopping_cart.pdf"'
+#        )
+#        p = canvas.Canvas(out_data)
+#        p.setFont("Times-Roman", 14)
+#        p.showPage()
+#        p.save()
+#        return out_data
 
 #       out_data = HttpResponse(data_list, content_type='text/plain')
 #       out_data = HttpResponse(data_list, 'Content-Type: application/pdf')
