@@ -3,7 +3,7 @@ import io
 from api.permissions import IsAdminOrReadOnly, IsAuthorOrStaff
 from django.http import FileResponse
 from django_filters.rest_framework import DjangoFilterBackend
-from reportlab.lib.pagesizes import A4
+# from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 # from reportlab.platypus import SimpleDocTemplate
 from rest_framework.decorators import action
