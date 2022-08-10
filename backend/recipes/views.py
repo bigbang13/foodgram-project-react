@@ -1,6 +1,8 @@
 import io
 
+import reportlab
 from api.permissions import IsAdminOrReadOnly, IsAuthorOrStaff
+from django.conf import settings
 from django.http import FileResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from reportlab.lib.colors import black
@@ -23,6 +25,10 @@ from .serializers import (FavoriteRecipesSerializer, IngredientSerializer,
                           RecipePostSerializer, RecipeSerializer,
                           ShoppingCartSerializer, TagSerializer)
 from .utils import create_delete
+
+reportlab.rl_config.TTFSearchPath.append(
+    str(settings.BASE_DIR) + '/reportlab/fonts'
+)
 
 
 class TagViewSet(ReadOnlyModelViewSet):
