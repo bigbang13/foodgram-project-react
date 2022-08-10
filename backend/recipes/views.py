@@ -96,4 +96,4 @@ class RecipeViewSet(ModelViewSet):
                 else:
                     data[name]['amount'] = (
                         data[name]['amount'] + amount)
-        return to_pdf(spisok, data)
+        return to_pdf(self, spisok, data)
