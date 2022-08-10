@@ -5,7 +5,7 @@ from api.permissions import IsAdminOrReadOnly, IsAuthorOrStaff
 from django.conf import settings
 from django.http import FileResponse
 from django_filters.rest_framework import DjangoFilterBackend
-from reportlab.lib.colors import (black, grey, orange)
+from reportlab.lib.colors import black, grey, orange
 from reportlab.lib.units import mm
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -110,12 +110,8 @@ class RecipeViewSet(ModelViewSet):
                 else:
                     data[name]['amount'] = (
                         data[name]['amount'] + amount)
-#        data_list = []
-#        for index, key in enumerate(data, start=1):
-#            data_list.append(
-#                f'{index}. {key} - {data[key]["amount"]} '
-#                f'{data[key]["measurement_unit"]}\n')
         pdfmetrics.registerFont(TTFont('Vlashu', 'Vlashu.otf'))
+        pdfmetrics.registerFont(TTFont('Gunny', 'Gunny.ttf'))
         buffer = io.BytesIO()
         p = canvas.Canvas(buffer)
         font_size = 6
@@ -127,6 +123,7 @@ class RecipeViewSet(ModelViewSet):
         p.drawString(x, y, top)
         y -= font_size * mm + 15
         color = 1
+        p.setFont('Gunny', font_size * mm)
         for key in spisok:
             p.drawString(x, y, key.name)
             y -= font_size * mm
@@ -134,7 +131,7 @@ class RecipeViewSet(ModelViewSet):
                 y = 270 * mm
                 p.showPage()
                 p.setFillColor(black)
-                p.setFont('Vlashu', font_size * mm)
+                p.setFont('Gunny', font_size * mm)
         y -= 15
         for key in data:
             if color % 2:
@@ -153,7 +150,7 @@ class RecipeViewSet(ModelViewSet):
                 y = 270 * mm
                 p.showPage()
                 p.setFillColor(black)
-                p.setFont('Vlashu', font_size * mm)
+                p.setFont('Gunny', font_size * mm)
         p.setTitle('Data')
         p.showPage()
         p.save()
