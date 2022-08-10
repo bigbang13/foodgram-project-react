@@ -127,7 +127,7 @@ class RecipeViewSet(ModelViewSet):
         p.drawString(x, y, top)
         y -= font_size * mm
         for key in spisok:
-            p.drawString(x, y, key)
+            p.drawString(x, y, key.name)
             y -= font_size * mm
             if y < 25 * mm:
                 y = 270 * mm
