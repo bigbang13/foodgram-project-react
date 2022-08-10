@@ -1,15 +1,5 @@
-import io
-
-import reportlab
 from api.permissions import IsAdminOrReadOnly, IsAuthorOrStaff
-from django.conf import settings
-from django.http import FileResponse
 from django_filters.rest_framework import DjangoFilterBackend
-from reportlab.lib.colors import black, grey, orange
-from reportlab.lib.units import mm
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.pdfgen import canvas
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
 from rest_framework.permissions import (IsAuthenticated,
@@ -22,11 +12,7 @@ from .paginations import RecipePagination
 from .serializers import (FavoriteRecipesSerializer, IngredientSerializer,
                           RecipePostSerializer, RecipeSerializer,
                           ShoppingCartSerializer, TagSerializer)
-from .utils import create_delete
-
-reportlab.rl_config.TTFSearchPath.append(
-    str(settings.BASE_DIR) + '/reportlab/fonts'
-)
+from .utils import create_delete, to_pdf
 
 
 class TagViewSet(ReadOnlyModelViewSet):
@@ -110,52 +96,4 @@ class RecipeViewSet(ModelViewSet):
                 else:
                     data[name]['amount'] = (
                         data[name]['amount'] + amount)
-        pdfmetrics.registerFont(TTFont('Vlashu', 'Vlashu.otf'))
-        pdfmetrics.registerFont(TTFont('Gunny', 'Gunny.ttf'))
-        buffer = io.BytesIO()
-        p = canvas.Canvas(buffer)
-        font_size = 6
-        p.setFont('Vlashu', font_size * mm)
-        x = 15 * mm
-        y = 270 * mm
-        p.setFillColor(black)
-        top = 'Список покупок для рецептов'
-        p.drawString(x, y, top)
-        y -= font_size * mm + 15
-        color = 1
-        p.setFont('Gunny', font_size * mm)
-        for key in spisok:
-            p.drawString(x, y, key.name)
-            y -= font_size * mm
-            if y < 25 * mm:
-                y = 270 * mm
-                p.showPage()
-                p.setFillColor(black)
-                p.setFont('Gunny', font_size * mm)
-        y -= 15
-        for key in data:
-            if color % 2:
-                p.setFillColor(grey)
-            else:
-                p.setFillColor(orange)
-            color += 1
-            p.drawString(x, y, key)
-            x += 380
-            p.drawString(x, y, str(data[key]["amount"]))
-            x += 60
-            p.drawString(x, y, data[key]["measurement_unit"])
-            x -= 440
-            y -= font_size * mm
-            if y < 25 * mm:
-                y = 270 * mm
-                p.showPage()
-                p.setFillColor(black)
-                p.setFont('Gunny', font_size * mm)
-        p.setTitle('Data')
-        p.showPage()
-        p.save()
-        buffer.seek(0)
-        return FileResponse(
-            buffer, as_attachment=True,
-            filename='shopping_cart.pdf'
-        )
+        return to_pdf(spisok, data)
