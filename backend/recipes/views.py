@@ -128,7 +128,7 @@ class RecipeViewSet(ModelViewSet):
         for key in data:
             p.drawString(x, y, key)
             x += 320
-            p.drawString(x, y, data[key]["amount"])
+            p.drawString(x, y, str(data[key]["amount"]))
             x += 60
             p.drawString(x, y, data[key]["measurement_unit"])
             x -= 380
