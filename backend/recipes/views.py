@@ -106,11 +106,11 @@ class RecipeViewSet(ModelViewSet):
                 else:
                     data[name]['amount'] = (
                         data[name]['amount'] + amount)
-        data_list = []
-        for index, key in enumerate(data, start=1):
-            data_list.append(
-                f'{index}. {key} - {data[key]["amount"]} '
-                f'{data[key]["measurement_unit"]}\n')
+#        data_list = []
+#        for index, key in enumerate(data, start=1):
+#            data_list.append(
+#                f'{index}. {key} - {data[key]["amount"]} '
+#                f'{data[key]["measurement_unit"]}\n')
         pdfmetrics.registerFont(TTFont('Vlashu', 'Vlashu.otf'))
         buffer = io.BytesIO()
         p = canvas.Canvas(buffer)
@@ -119,12 +119,12 @@ class RecipeViewSet(ModelViewSet):
         x = 15 * mm
         y = 25 * mm
         p.setFillColor(black)
-        for key in data_list:
+        for key in data:
             p.drawString(x, y, key)
             x += 320
-            p.drawString(x, y, str(data_list[key][0]))
+            p.drawString(x, y, str(data[key][0]))
             x += 60
-            p.drawString(x, y, data_list[key][1])
+            p.drawString(x, y, data[key][1])
             x -= 380
             y += font_size * mm
             if y > 280 * mm:
@@ -132,7 +132,7 @@ class RecipeViewSet(ModelViewSet):
                 p.showPage()
                 p.setFillColor(black)
                 p.setFont('Vlashu', font_size * mm)
-        p.setTitle('Data_list')
+        p.setTitle('Data')
         p.showPage()
         p.save()
         buffer.seek(0)
