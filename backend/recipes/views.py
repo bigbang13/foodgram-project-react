@@ -98,11 +98,6 @@ class RecipeViewSet(ModelViewSet):
                     data[name]['amount'] = (
                         data[name]['amount'] + amount)
         data_list = []
-        data_list.append(
-            f'Список рецептов в корзине:{spisok} \n \n \
-            \nДля приготовления понадобятся: \n \n \
-            \n \n -- foodgram --'
-        )
         for index, key in enumerate(data, start=1):
             data_list.append(
                 f'{index}. {key} - {data[key]["amount"]} '
