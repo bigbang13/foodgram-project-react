@@ -1,7 +1,7 @@
 import io
 
 from api.permissions import IsAdminOrReadOnly, IsAuthorOrStaff
-from django.http import FileResponse, HttpResponse
+from django.http import FileResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from reportlab.pdfgen import canvas
 from rest_framework.decorators import action
@@ -113,7 +113,7 @@ class RecipeViewSet(ModelViewSet):
             buffer.seek(0)
             return FileResponse(
                 buffer, as_attachment=True,
-                filename='hello.pdf'
+                filename='shopping_cart.pdf'
             )
 
 #        out_data = HttpResponse(data_list, content_type='application/pdf')
