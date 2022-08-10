@@ -53,12 +53,12 @@ class UserIDSerializer(serializers.ModelSerializer):
             'is_subscribed'
         )
 
-    def get_is_subscribed(self, request):
+    def get_is_subscribed(self, obj):
         request = self.context.get('request')
         if request.user.is_anonymous or request is None:
             return False
         return User.objects.filter(
-            following__user=self.request.user
+            following__user=request.user
         ).exists()
 
 #        return Subscription.objects.filter(
@@ -94,12 +94,12 @@ class SubscriptionSerializer(serializers.Serializer):
         fields = ('id', 'email', 'username', 'first_name', 'last_name',
                   'is_subscribed', 'recipes', 'recipes_count')
 
-    def get_is_subscribed(self, request):
+    def get_is_subscribed(self, obj):
         request = self.context.get('request')
         if request.user.is_anonymous or request is None:
             return False
         return User.objects.filter(
-            following__user=self.request.user
+            following__user=request.user
         ).exists()
 
 #    def get_is_subscribed(self, obj):
