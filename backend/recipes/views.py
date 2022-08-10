@@ -5,7 +5,7 @@ from api.permissions import IsAdminOrReadOnly, IsAuthorOrStaff
 from django.conf import settings
 from django.http import FileResponse
 from django_filters.rest_framework import DjangoFilterBackend
-from reportlab.lib.colors import black
+from reportlab.lib.colors import (black, grey, orange)
 from reportlab.lib.units import mm
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -125,7 +125,8 @@ class RecipeViewSet(ModelViewSet):
         p.setFillColor(black)
         top = 'Список покупок для рецептов'
         p.drawString(x, y, top)
-        y -= font_size * mm
+        y -= font_size * mm + 15
+        color = 1
         for key in spisok:
             p.drawString(x, y, key.name)
             y -= font_size * mm
@@ -134,7 +135,13 @@ class RecipeViewSet(ModelViewSet):
                 p.showPage()
                 p.setFillColor(black)
                 p.setFont('Vlashu', font_size * mm)
+        y -= 15
         for key in data:
+            if color % 2:
+                p.setFillColor(grey)
+            else:
+                p.setFillColor(orange)
+            color += 1
             p.drawString(x, y, key)
             x += 380
             p.drawString(x, y, str(data[key]["amount"]))
