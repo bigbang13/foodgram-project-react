@@ -9,9 +9,7 @@ from reportlab.lib.colors import black
 from reportlab.lib.units import mm
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-# from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
-# from reportlab.platypus import SimpleDocTemplate
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
 from rest_framework.permissions import (IsAuthenticated,
@@ -123,18 +121,18 @@ class RecipeViewSet(ModelViewSet):
         font_size = 6
         p.setFont('Vlashu', font_size * mm)
         x = 15 * mm
-        y = 25 * mm
+        y = 255 * mm
         p.setFillColor(black)
         for key in data:
             p.drawString(x, y, key)
-            x += 320
+            x += 380
             p.drawString(x, y, str(data[key]["amount"]))
             x += 60
             p.drawString(x, y, data[key]["measurement_unit"])
-            x -= 380
-            y += font_size * mm
-            if y > 280 * mm:
-                y = 25 * mm
+            x -= 440
+            y -= font_size * mm
+            if y < 25 * mm:
+                y = 255 * mm
                 p.showPage()
                 p.setFillColor(black)
                 p.setFont('Vlashu', font_size * mm)
@@ -146,28 +144,3 @@ class RecipeViewSet(ModelViewSet):
             buffer, as_attachment=True,
             filename='shopping_cart.pdf'
         )
-
-#        p.drawString(10, 10, "Список покупок.")
-#        p.showPage()
-#        p.save()
-#        buffer.seek(0)
-#        return FileResponse(
-#            buffer, as_attachment=True,
-#            filename='shopping_cart.pdf'
-#        )
-
-#        out_data = HttpResponse(data_list, content_type='application/pdf')
-#        out_data['Content-Disposition'] = (
-#            'attachment; filename="shopping_cart.pdf"'
-#        )
-#        p = canvas.Canvas(out_data)
-#        p.setFont("Times-Roman", 14)
-#        p.showPage()
-#        p.save()
-#        return out_data
-
-#       out_data = HttpResponse(data_list, content_type='text/plain')
-#       out_data = HttpResponse(data_list, 'Content-Type: application/pdf')
-#       out_data['Content-Disposition'] = (
-#           'attachment; filename="shopping_cart"'
-#       )
