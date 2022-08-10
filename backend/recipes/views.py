@@ -98,11 +98,17 @@ class RecipeViewSet(ModelViewSet):
                     data[name]['amount'] = (
                         data[name]['amount'] + amount)
         data_list = []
+        data_list.append(
+            f'Список рецептов в корзине:{spisok} \n \n \
+            \nДля приготовления понадобятся: \n \n \
+            \n \n -- foodgram --'
+        )
         for index, key in enumerate(data, start=1):
             data_list.append(
                 f'{index}. {key} - {data[key]["amount"]} '
                 f'{data[key]["measurement_unit"]}\n')
-        out_data = HttpResponse(data_list, content_type='text/plain')
+#        out_data = HttpResponse(data_list, content_type='text/plain')
+        out_data = HttpResponse(data_list, content_type='application/pdf')
         out_data['Content-Disposition'] = (
             'attachment; filename="shopping_cart"'
         )

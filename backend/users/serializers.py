@@ -59,7 +59,7 @@ class UserIDSerializer(serializers.ModelSerializer):
             return False
         return User.objects.filter(
             following__user=request.user,
-            follower__author=obj
+            follower__author=obj.id
         ).exists()
 
 #        return Subscription.objects.filter(
@@ -101,7 +101,7 @@ class SubscriptionSerializer(serializers.Serializer):
             return False
         return User.objects.filter(
             following__user=request.user,
-            follower__author=obj
+            follower__author=obj.id
         ).exists()
 
 #    def get_is_subscribed(self, obj):
