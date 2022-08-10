@@ -128,9 +128,9 @@ class RecipeViewSet(ModelViewSet):
         for key in data:
             p.drawString(x, y, key)
             x += 320
-            p.drawString(x, y, str(data[key][0]))
+            p.drawString(x, y, data[key]["amount"])
             x += 60
-            p.drawString(x, y, data[key][1])
+            p.drawString(x, y, data[key]["measurement_unit"])
             x -= 380
             y += font_size * mm
             if y > 280 * mm:
