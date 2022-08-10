@@ -18,6 +18,7 @@ reportlab.rl_config.TTFSearchPath.append(
     str(settings.BASE_DIR) + '/reportlab/fonts'
 )
 
+
 def save_tags_and_ingredients(self, obj):
     tags = self.initial_data.get('tags')
     for tag in tags:
