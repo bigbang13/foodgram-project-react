@@ -1,6 +1,7 @@
 from api.permissions import IsAdminOrReadOnly, IsAuthorOrStaff
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
+from reportlab.pdfgen import canvas
 from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
 from rest_framework.permissions import (IsAuthenticated,
@@ -102,9 +103,18 @@ class RecipeViewSet(ModelViewSet):
             data_list.append(
                 f'{index}. {key} - {data[key]["amount"]} '
                 f'{data[key]["measurement_unit"]}\n')
-#        out_data = HttpResponse(data_list, content_type='text/plain')
-        out_data = HttpResponse(data_list, 'Content-Type: application/pdf')
+        out_data = HttpResponse(data_list, content_type='application/pdf')
         out_data['Content-Disposition'] = (
-            'attachment; filename="shopping_cart"'
+            'attachment; filename="shopping_cart.pdf"'
         )
+        p = canvas.Canvas(out_data)
+        p.setFont("Times-Roman", 14)
+        p.showPage()
+        p.save()
         return out_data
+
+#       out_data = HttpResponse(data_list, content_type='text/plain')
+#       out_data = HttpResponse(data_list, 'Content-Type: application/pdf')
+#       out_data['Content-Disposition'] = (
+#           'attachment; filename="shopping_cart"'
+#       )
