@@ -104,12 +104,6 @@ docker-compose exec backend python manage.py collectstatic --no-input
    sudo docker-compose exec web python manage.py createsuperuser
    ```
 
-## Admin зона
-- http://51.250.29.50
-- low@key.ru
-- lowkey
-- gecnjqgfhjkm
-
 ## Технологии
 - Python 3.7
 - Django 2.2.16
